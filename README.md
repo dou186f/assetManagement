@@ -42,7 +42,7 @@ A mobile and web-based asset tracking solution developed during an internship. E
 ## Getting Started
 
 ```bash
-git clone https://github.com/dou186f/assetManagementProject.git
+git clone https://github.com/dou186f/assetManagement.git
 ```
 
 1. Open the solution in Visual Studio 2022.
