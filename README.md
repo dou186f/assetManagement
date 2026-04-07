@@ -17,8 +17,10 @@ A mobile and web-based asset tracking solution developed during an internship. E
 |---|---|
 | Mobile Frontend | .NET MAUI |
 | Backend | ASP.NET Core Web API |
+| ORM | Entity Framework Core 9 |
 | Database | Microsoft SQL Server |
 | Architecture | MVVM + Repository Pattern |
+| MVVM Toolkit | CommunityToolkit.Mvvm |
 | Language | C# |
 | Tools | Visual Studio 2022, SSMS 21, GitHub |
 
