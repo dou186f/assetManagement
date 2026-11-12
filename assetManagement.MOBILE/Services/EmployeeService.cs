@@ -15,7 +15,7 @@ namespace assetManagement.MOBILE.Services
             {
                 return await _http.GetFromJsonAsync<EmployeeModel>($"api/employee/{id}");
             }
-            catch
+            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
                 return null;
             }

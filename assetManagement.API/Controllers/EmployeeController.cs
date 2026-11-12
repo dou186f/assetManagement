@@ -45,6 +45,10 @@ namespace assetManagement.API.Controllers
                 var changed = await _assetrepo.AssignToEmployeeAsync(assetId, employeeId, reassign, at);
                 return changed ? NoContent() : StatusCode(StatusCodes.Status304NotModified);
             }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
             catch (InvalidOperationException ex)
             {
                 return Conflict(new { message = ex.Message });
@@ -54,8 +58,15 @@ namespace assetManagement.API.Controllers
         [HttpDelete("asset/{assetId:int}")]
         public async Task<IActionResult> UnassignAssetFromEmployee(int assetId)
         {
-            var changed = await _assetrepo.UnassignFromEmployeeAsync(assetId);
-            return changed ? NoContent() : StatusCode(StatusCodes.Status304NotModified);
+            try
+            {
+                var changed = await _assetrepo.UnassignFromEmployeeAsync(assetId);
+                return changed ? NoContent() : StatusCode(StatusCodes.Status304NotModified);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
         }
     }
 }

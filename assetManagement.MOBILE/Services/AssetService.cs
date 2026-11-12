@@ -13,7 +13,7 @@ namespace assetManagement.MOBILE.Services
             {
                 return await _http.GetFromJsonAsync<AssetModel>($"api/asset/{id}");
             }
-            catch
+            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
                 return null;
             }

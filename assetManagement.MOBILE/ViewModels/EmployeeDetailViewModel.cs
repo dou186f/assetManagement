@@ -116,6 +116,10 @@ namespace assetManagement.MOBILE.ViewModels
                     DepartmentName = "(No department)";
                 }
             }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync(ex);
+            }
             finally
             {
                 IsBusy = false;
@@ -132,6 +136,10 @@ namespace assetManagement.MOBILE.ViewModels
                 var list = await _departmentservice.GetAllAsync();
                 foreach (var d in list) Departments.Add(d);
             }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync(ex);
+            }
             finally { IsBusy = false; }
         }
 
@@ -140,18 +148,25 @@ namespace assetManagement.MOBILE.ViewModels
             if (SelectedDepartment is null) return;
             try
             {
-                IsBusy = true;
-                await _departmentservice.AddEmployeeAsync(SelectedDepartment.id, EmployeeId, reassign: false);
-                await Shell.Current.DisplayAlert("Okey", "Added to department.", "OK");
-            }
-            catch (InvalidOperationException ex)
-            {
-                var move = await Shell.Current.DisplayAlert("Transport required", $"{ex.Message}\nMove to selected department?", "Yes", "No");
-                if (move)
+                try
                 {
-                    await _departmentservice.AddEmployeeAsync(SelectedDepartment.id, EmployeeId, reassign: true);
-                    await Shell.Current.DisplayAlert("Moved", "The employee was moved to the selected department.", "OK");
+                    IsBusy = true;
+                    await _departmentservice.AddEmployeeAsync(SelectedDepartment.id, EmployeeId, reassign: false);
+                    await Shell.Current.DisplayAlert("Okey", "Added to department.", "OK");
                 }
+                catch (InvalidOperationException ex)
+                {
+                    var move = await Shell.Current.DisplayAlert("Transport required", $"{ex.Message}\nMove to selected department?", "Yes", "No");
+                    if (move)
+                    {
+                        await _departmentservice.AddEmployeeAsync(SelectedDepartment.id, EmployeeId, reassign: true);
+                        await Shell.Current.DisplayAlert("Moved", "The employee was moved to the selected department.", "OK");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync(ex);
             }
             finally { IsBusy = false; await LoadAsync(EmployeeId); IsAdderVisible = false; }
         }
@@ -164,7 +179,24 @@ namespace assetManagement.MOBILE.ViewModels
                 await _departmentservice.RemoveEmployeeAsync(EmployeeId);
                 await Shell.Current.DisplayAlert("Okey", "The employee was removed from the department.", "OK");
             }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync(ex);
+            }
             finally { IsBusy = false; await LoadAsync(EmployeeId); IsAdderVisible = false; }
+        }
+
+        private static Task ShowErrorAsync(Exception ex)
+        {
+            var message = ex switch
+            {
+                HttpRequestException { StatusCode: System.Net.HttpStatusCode.NotFound } => "The requested record was not found. Refresh and try again.",
+                HttpRequestException { StatusCode: not null } => "The server could not complete the operation. Try again.",
+                HttpRequestException => "The server could not be reached. Check your connection and API address.",
+                OperationCanceledException => "The request timed out. Try again.",
+                _ => "The operation could not be completed. Try again."
+            };
+            return Shell.Current.DisplayAlert("Error", message, "OK");
         }
 
         private bool _initRunning, _initDone;

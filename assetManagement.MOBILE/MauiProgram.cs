@@ -25,9 +25,9 @@ public static class MauiProgram
              });
 
 #if DEBUG
-        var baseUri = new Uri("https://localhost:1234");
+        var baseUri = new Uri("https://localhost:7145");
 #else
-        var baseUri = new Uri("https://localhost:1234");
+        var baseUri = new Uri("https://localhost:7145");
 #endif
 
         builder.Services.AddSingleton(new HttpClient { BaseAddress = baseUri });

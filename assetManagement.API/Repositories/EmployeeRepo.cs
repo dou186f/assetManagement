@@ -35,7 +35,7 @@ namespace assetManagement.API.Repositories
             using var tx = await _context.Database.BeginTransactionAsync();
 
             var employee = await _context.employees.FirstOrDefaultAsync(x => x.id == employeeId);
-            if (employee is null) throw new Exception("No Employee Found");
+            if (employee is null) throw new KeyNotFoundException("No Employee Found");
 
             var departman = await _context.departments.FirstOrDefaultAsync(x => x.id == departId);
             if (departman is null) throw new KeyNotFoundException("No Department Found");

@@ -117,6 +117,10 @@ namespace assetManagement.MOBILE.ViewModels
                     EmployeeName = "(Asset in storage)";
                 }
             }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync(ex);
+            }
             finally
             {
                 IsBusy = false;
@@ -133,6 +137,10 @@ namespace assetManagement.MOBILE.ViewModels
                 var list = await _employeeservice.GetEmployeesAllAsync();
                 foreach (var d in list) Employees.Add(d);
             }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync(ex);
+            }
             finally { IsBusy = false; }
         }
 
@@ -141,18 +149,25 @@ namespace assetManagement.MOBILE.ViewModels
             if (SelectedEmployee is null) return;
             try
             {
-                IsBusy = true;
-                await _employeeservice.AddAssetAsync(SelectedEmployee.id, AssetId, reassign: false);
-                await Shell.Current.DisplayAlert("Okey", "Given to Employee", "OK");
-            }
-            catch (InvalidOperationException ex)
-            {
-                var move = await Shell.Current.DisplayAlert("Transfer required", $"{ex.Message}\nShould it be given to the selected employee?", "Yes", "No");
-                if (move)
+                try
                 {
-                    await _employeeservice.AddAssetAsync(SelectedEmployee.id, AssetId, reassign: true);
-                    await Shell.Current.DisplayAlert("Moved", "The item was moved to the selected employee.", "OK");
+                    IsBusy = true;
+                    await _employeeservice.AddAssetAsync(SelectedEmployee.id, AssetId, reassign: false);
+                    await Shell.Current.DisplayAlert("Okey", "Given to Employee", "OK");
                 }
+                catch (InvalidOperationException ex)
+                {
+                    var move = await Shell.Current.DisplayAlert("Transfer required", $"{ex.Message}\nShould it be given to the selected employee?", "Yes", "No");
+                    if (move)
+                    {
+                        await _employeeservice.AddAssetAsync(SelectedEmployee.id, AssetId, reassign: true);
+                        await Shell.Current.DisplayAlert("Moved", "The item was moved to the selected employee.", "OK");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync(ex);
             }
             finally { IsBusy = false; await LoadAsync(AssetId); IsAdderVisible = false; }
         }
@@ -165,7 +180,24 @@ namespace assetManagement.MOBILE.ViewModels
                 await _employeeservice.RemoveAssetAsync(AssetId);
                 await Shell.Current.DisplayAlert("Okey", "The item was received from the employee.", "OK");
             }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync(ex);
+            }
             finally { IsBusy = false; await LoadAsync(AssetId); IsAdderVisible = false; }
+        }
+
+        private static Task ShowErrorAsync(Exception ex)
+        {
+            var message = ex switch
+            {
+                HttpRequestException { StatusCode: System.Net.HttpStatusCode.NotFound } => "The requested record was not found. Refresh and try again.",
+                HttpRequestException { StatusCode: not null } => "The server could not complete the operation. Try again.",
+                HttpRequestException => "The server could not be reached. Check your connection and API address.",
+                OperationCanceledException => "The request timed out. Try again.",
+                _ => "The operation could not be completed. Try again."
+            };
+            return Shell.Current.DisplayAlert("Error", message, "OK");
         }
 
         private bool _initRunning, _initDone;

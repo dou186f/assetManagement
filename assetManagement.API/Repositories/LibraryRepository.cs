@@ -76,29 +76,29 @@ namespace assetManagement.API.Repositories
                 switch (fieldLower)
                 {
                     case "employee":
-                        qset = qset.Where(x => x.Type == "Employee" && EF.Functions.Like(EF.Functions.Collate(x.Name, CS), $"%{t}%") ||
-                                                                       EF.Functions.Like(EF.Functions.Collate(x.Name, CS_LATIN), $"%{t}%"));
+                        qset = qset.Where(x => x.Type == "Employee" && (EF.Functions.Like(EF.Functions.Collate(x.Name, CS), $"%{t}%") ||
+                                                                       EF.Functions.Like(EF.Functions.Collate(x.Name, CS_LATIN), $"%{t}%")));
                         break;
 
                     case "department":
-                        qset = qset.Where(x => x.Type == "Department" && EF.Functions.Like(EF.Functions.Collate(x.Name, CS), $"%{t}%") ||
-                                                                         EF.Functions.Like(EF.Functions.Collate(x.Name, CS_LATIN), $"%{t}%"));
+                        qset = qset.Where(x => x.Type == "Department" && (EF.Functions.Like(EF.Functions.Collate(x.Name, CS), $"%{t}%") ||
+                                                                         EF.Functions.Like(EF.Functions.Collate(x.Name, CS_LATIN), $"%{t}%")));
                         break;
 
                     case "asset":
-                        qset = qset.Where(x => x.Type == "Asset" && EF.Functions.Like(EF.Functions.Collate(x.Name, CS), $"%{t}%") ||
-                                                                    EF.Functions.Like(EF.Functions.Collate(x.Name, CS_LATIN), $"%{t}%"));
+                        qset = qset.Where(x => x.Type == "Asset" && (EF.Functions.Like(EF.Functions.Collate(x.Name, CS), $"%{t}%") ||
+                                                                    EF.Functions.Like(EF.Functions.Collate(x.Name, CS_LATIN), $"%{t}%")));
                         break;
 
                     case "category":
-                        qset = qset.Where(x => x.Type == "Category" && EF.Functions.Like(EF.Functions.Collate(x.Name, CS), $"%{t}%") ||
-                                                                       EF.Functions.Like(EF.Functions.Collate(x.Name, CS_LATIN), $"%{t}%"));
+                        qset = qset.Where(x => x.Type == "Category" && (EF.Functions.Like(EF.Functions.Collate(x.Name, CS), $"%{t}%") ||
+                                                                       EF.Functions.Like(EF.Functions.Collate(x.Name, CS_LATIN), $"%{t}%")));
                         break;
 
                     case "serialnumber":
                         qset = qset.Where(x => x.Type == "Asset" && x.Serial != null &&
-                                               EF.Functions.Like(EF.Functions.Collate(x.Serial, CS), $"%{t}%") ||
-                                                                 EF.Functions.Like(EF.Functions.Collate(x.Serial, CS_LATIN), $"%{t}%"));
+                                               (EF.Functions.Like(EF.Functions.Collate(x.Serial, CS), $"%{t}%") ||
+                                                                 EF.Functions.Like(EF.Functions.Collate(x.Serial, CS_LATIN), $"%{t}%")));
                         break;
 
                     case "reginumber":
@@ -107,8 +107,8 @@ namespace assetManagement.API.Repositories
                             if (parsed.HasValue)
                                 qset = qset.Where(x => x.Type == "Employee" && x.Regi == parsed.Value);
                             else
-                                qset = qset.Where(x => x.Type == "Employee" && EF.Functions.Like(EF.Functions.Collate(x.Name, CS), $"%{t}%") ||
-                                                                               EF.Functions.Like(EF.Functions.Collate(x.Name, CS_LATIN), $"%{t}%"));
+                                qset = qset.Where(x => x.Type == "Employee" && (EF.Functions.Like(EF.Functions.Collate(x.Name, CS), $"%{t}%") ||
+                                                                               EF.Functions.Like(EF.Functions.Collate(x.Name, CS_LATIN), $"%{t}%")));
                             break;
                         }
 
@@ -119,8 +119,8 @@ namespace assetManagement.API.Repositories
                             qset = qset.Where(x =>
                                 EF.Functions.Like(EF.Functions.Collate(x.Name, CS), $"%{t}%") ||
                                                     EF.Functions.Like(EF.Functions.Collate(x.Name, CS_LATIN), $"%{t}%") ||
-                                (x.Serial != null && EF.Functions.Like(EF.Functions.Collate(x.Serial, CS), $"%{t}%")) ||
-                                                    EF.Functions.Like(EF.Functions.Collate(x.Serial, CS_LATIN), $"%{t}%") ||
+                                (x.Serial != null && (EF.Functions.Like(EF.Functions.Collate(x.Serial, CS), $"%{t}%") ||
+                                                    EF.Functions.Like(EF.Functions.Collate(x.Serial, CS_LATIN), $"%{t}%"))) ||
                                 (parsed.HasValue && x.Regi == parsed.Value)
                             );
                             break;
