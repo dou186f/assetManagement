@@ -22,7 +22,7 @@ const string MauiCors = "allow_maui";
 builder.Services.AddCors(o =>
 {
     o.AddPolicy(MauiCors, p =>
-        p.WithOrigins("https://307637fc6699.ngrok-free.app").AllowAnyHeader().AllowAnyMethod()); //ngrok http https://localhost:7145
+        p.WithOrigins("https://your-api.example.invalid").AllowAnyHeader().AllowAnyMethod()); //ngrok http https://localhost:7145
 });
 
 var app = builder.Build();
